@@ -4,22 +4,30 @@
 import React, { useEffect, useState } from 'react';
 
 export default function RestaurantePage({ params }) {
-    const { id } = params;
     const [restaurante, setRestaurante] = useState(null);
     const [pratos, setPratos] = useState([]);
+    const [id, setId] = useState(null);
 
     useEffect(() => {
-        fetch(`https://apifakedelivery.vercel.app/restaurants/${id}`)
-            .then(response => response.json())
-            .then(data => setRestaurante(data));
+        const fetchData = async () => {
+            const restaurantId = params?.id;
+            if (restaurantId) {
+                setId(restaurantId); // Atualiza o id quando os parâmetros são carregados
 
-        fetch('https://apifakedelivery.vercel.app/foods')
-            .then(response => response.json())
-            .then(data => {
-                const pratosFiltrados = data.filter(prato => prato.restaurantId === id);
+                // Fetching the restaurant data
+                const restauranteResponse = await fetch(`https://apifakedelivery.vercel.app/restaurants/${restaurantId}`);
+                const restauranteData = await restauranteResponse.json();
+                setRestaurante(restauranteData);
+
+                // Fetching the pratos data
+                const pratosResponse = await fetch('https://apifakedelivery.vercel.app/foods');
+                const pratosData = await pratosResponse.json();
+                const pratosFiltrados = pratosData.filter(prato => prato.restaurantId === restaurantId);
                 setPratos(pratosFiltrados);
-            });
-    }, [id]);
+            }
+        };
+        fetchData();
+    }, [params]);  // Reexecuta quando params muda
 
     if (!restaurante) return <div>Loading...</div>;
 
@@ -46,7 +54,7 @@ export default function RestaurantePage({ params }) {
                     </div>
                 </div>
             </header>
-            <section className="rounded-t-3xl bg-orange-100 md:mt-32 mt-28 flex items-center p-4 text-center">
+            <section className="rounded-t-3xl md:px-80 bg-orange-100 md:mt-32 mt-28 flex items-center p-4 text-center">
                 <img
                     src={restaurante.image}
                     alt={restaurante.name}
@@ -57,27 +65,26 @@ export default function RestaurantePage({ params }) {
                     <p className="text-gray-600 mt-2">{restaurante.description}</p>
                     <span className="text-yellow-500">{restaurante.rating} ★</span>
                 </div>
-
             </section>
 
-            <section className="pt-6 bg-orange-100 px-4">
+            <section className="pt-6 md:px-80 bg-orange-100 px-4">
                 <h2 className="text-xl font-bold mb-4">Pratos do Restaurante</h2>
                 <ul className="space-y-4">
                     {pratos.map(prato => (
-                        <li key={prato.id} className="flex rounded-xl bg-orange-100 hover:bg-orange-50 transition p-3">
+                        <li key={prato.id} className="flex rounded-xl bg-orange-200 hover:scale-105 transition p-3">
                             <a href={`/prato/${prato.id}`}>
-                            <img
-                                src={prato.image}
-                                alt={prato.name}
-                                className="w-16 h-16 rounded-lg object-cover mr-3"
-                            />
-                            <div className="flex-1">
-                                <h3 className="font-semibold">{prato.name}</h3>
-                                <p className="text-gray-600 text-sm">{prato.description}</p>
-                                <span className="text-green-600 font-medium">
-                                    R${prato.price.toFixed(2)}
-                                </span>
-                            </div>
+                                <img
+                                    src={prato.image}
+                                    alt={prato.name}
+                                    className="w-16 h-16 rounded-lg object-cover mr-3"
+                                />
+                                <div className="flex-1">
+                                    <h3 className="font-semibold">{prato.name}</h3>
+                                    <p className="text-gray-600 text-sm">{prato.description}</p>
+                                    <span className="text-green-600 font-medium">
+                                        R${prato.price.toFixed(2)}
+                                    </span>
+                                </div>
                             </a>
                         </li>
                     ))}

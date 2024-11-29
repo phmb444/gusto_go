@@ -48,7 +48,7 @@ export default function Home() {
           <h2 className="text-2xl font-bold mb-3">Famosos no GustoGo</h2>
           <div className="flex space-x-4 md:justify-center overflow-x-auto pb-2">
             {popularFoods.slice(0, 4).map((food) => (
-              <a href={`/prato/${food.id}`} key={food.id} className="min-w-[150px] h-[180px] bg-white rounded-lg shadow-md flex flex-col">
+              <a href={`/prato/${food.id}`} key={food.id} className="min-w-[150px] h-[180px] bg-white hover:bg-gray-50 transition rounded-lg shadow-md flex flex-col">
                 <img
                   src={food.image}
                   alt={food.name}
@@ -84,7 +84,7 @@ export default function Home() {
           <h2 className="text-2xl font-bold mb-3">Restaurantes</h2>
           <div className="space-y-3">
             {restaurants.map((restaurant) => (
-              <a href={`/restaurante/${restaurant.id}`} key={restaurant.id} className="bg-white p-4 rounded-lg shadow-md flex items-center">
+              <a href={`/restaurante/${restaurant.id}`} key={restaurant.id} className="bg-white hover:bg-gray-50 hover:scale-105 transition p-4 rounded-lg shadow-md flex items-center">
                 <div className="w-16 h-16 rounded-lg mr-4 overflow-hidden">
                   <img
                     src={restaurant.image}
